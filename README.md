@@ -2,13 +2,76 @@
 
 ## 1. 課題概要
 
-本課題では、Yahboom DOFBOT-Pi ロボットアームを使用し、LLMで自然言語による指示を解釈して、ROS 2を介して実機ロボットを動作させるシステムを構築した。
+本課題では、Yahboom DOFBOT-Pi ロボットアームを使用し、LLMによる自然言語理解、ROS 2、Computer Visionを組み合わせて、自然言語による指示から実機ロボットの動作までを実行するPhysical AIシステムを構築した。
+
+### 使用したロボット：DOFBOT-Pi
+
+DOFBOT-Piは、Yahboom社が提供するRaspberry Piベースの6DoFロボットアームで、6個のバスサーボとカメラを搭載している。
+
+ROS 2 Humble、Python、OpenCVを利用した開発環境が用意されており、基本的なサーボ制御に加えて、色認識、物体位置検出、Visual Tracking、Visual Grasping、Inverse Kinematicsなどを利用したロボットアーム制御を行うことができる。
+
+本課題では、DOFBOT-Pi公式環境が提供するカメラ、色認識、Inverse Kinematics、把持処理などの既存機能を活用し、その上にLLMによる自然言語インターフェースを追加した。
+
+### ベンチマークとした実装
+
+本課題を検討するにあたり、以下のQiita記事をベンチマークの一つとした。
+
+**ChatGPT APIを使って自然言語の指示でGazebo上のTurtleBot3を制御する**
+
+https://qiita.com/porizou1/items/a085d20e936946330540
+
+この実装では、例えば、
+
+> 「0.2m/sで前に進む」
+
+という自然言語による指示をChatGPTへ入力し、ChatGPTにROS 2のPythonノードを生成させる。
+
+生成されたPythonコードをファイルとして保存し、`subprocess`から実行することで、Gazebo上のTurtleBot3を制御している。
+
+処理の概略は以下のようになる。
+
+```text
+自然言語による指示
+        ↓
+ChatGPT API
+        ↓
+ROS 2 Pythonコードを生成
+        ↓
+生成したコードを実行
+        ↓
+Gazebo上のTurtleBot3を制御
+```
+
+### ベンチマークとの違い
+
+本課題では、この「自然言語からROS 2ロボットを操作する」という考え方を参考にしつつ、主に以下の3点を変更した。
+
+#### 1. シミュレータではなく実機を使用
+
+ベンチマークではGazebo上のTurtleBot3を制御するのに対し、本課題ではDOFBOT-Pi実機を使用する。
+
+そのため、単純な速度指令だけでなく、
+
+- カメラ画像の取得
+- 対象物の色認識
+- 対象位置の推定
+- Inverse Kinematics
+- サーボ制御
+- グリッパによる把持
+
+といった、実世界との相互作用を含む処理が必要となる。
+
+#### 2. LLMにROS 2コードそのものを生成させない
+
+ベンチマークでは、LLMがROS 2 Pythonコードを生成し、そのコードを直接実行する。
+
+一方、本課題ではLLMの役割を自然言語の意味解釈と高レベルなタスク生成に限定した。
 
 例えば、
 
 > 「赤いブロックを片付けて」
 
-という自然言語による指示をLLMへ入力すると、LLMが以下のような構造化されたJSONコマンドへ変換する。
+という指示に対して、LLMは以下のような構造化されたJSONのみを生成する。
 
 ```json
 {
@@ -17,19 +80,56 @@
 }
 ```
 
-このJSONをROS 2ノードへ渡し、カメラ画像から指定された色のブロックを認識して位置を推定し、ロボットアームによる把持・移動を実行する。
+このJSONをROS 2側で検証し、あらかじめ用意したROS 2ノードのみが実機を制御する。
+
+これにより、LLMが生成した任意のPythonコードをそのまま実機で実行する方式と比較して、実行可能な操作を限定し、安全性と再現性を高めることを狙った。
+
+#### 3. 自然言語からPhysical Actionまでを接続
+
+本課題では、LLMによる自然言語理解だけでなく、その後のComputer Vision、位置推定、Inverse Kinematics、実機ロボット制御までを一つのパイプラインとして接続した。
+
+```text
+Natural Language
+        ↓
+OpenAI LLM
+        ↓
+Structured JSON
+        ↓
+ROS 2
+        ↓
+Computer Vision
+        ↓
+Target Position Estimation
+        ↓
+Inverse Kinematics
+        ↓
+DOFBOT-Pi Physical Action
+```
+
+つまり、ベンチマークの
+
+**「自然言語 → ROS 2コード生成 → シミュレーションロボット制御」**
+
+という構成を、本課題では
+
+**「自然言語 → 構造化タスク生成 → Vision → 実機ロボット制御」**
+
+へ発展させた。
 
 ---
 
 ## 2. 目的
 
-今回は、より安全で再利用性の高い構成を目指し、LLMには低レベルなロボット制御コードを生成させず、「何を行うか」という高レベルなタスクのみをJSONとして生成させる方式とした。
+本課題では、LLMとPhysical AIを組み合わせ、自然言語による高レベルな指示から実世界のロボット動作までを接続することを目的とした。
+
+特に、より安全で再利用性の高い構成を目指し、LLMには低レベルなロボット制御コードを生成させず、「何を行うか」という高レベルなタスクのみをJSONとして生成させる方式とした。
 
 これにより、
 
-- LLM：自然言語の解釈とタスク生成
-- ROS 2：ロボットの決定論的な制御
-- Vision：対象物の認識と位置推定
+- **LLM**：自然言語の解釈とタスク生成
+- **ROS 2**：タスクの受け渡しと決定論的なロボット制御
+- **Computer Vision**：対象物の認識と位置推定
+- **DOFBOT-Pi**：実世界での把持・移動
 
 という役割分担を行った。
 
@@ -108,13 +208,13 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
 └── src/
     └── dofbot_sorting/
         ├── setup.py                     # 編集。llm_command_node、llm_color_sorting を
-        |                                  ROS 2 executableとして登録。
+        │                                  ROS 2 executableとして登録
         └── dofbot_sorting/
             ├── color_sorting.py         # Yahboom標準
-            ├── llm_color_sorting.py     # 新規作成。/llm_task をsubscribe。指定色を画像認識。
-            |                              対象位置を計算して /PosInfo にpublish
+            ├── llm_color_sorting.py     # 新規作成。/llm_task をsubscribe。指定色を画像認識し、
+            │                              対象位置を計算して /PosInfo にpublish
             ├── llm_command_node.py      # 新規作成。自然言語をOpenAI APIへ送信。LLM出力を
-            |                              構造化JSONへ変換。/llm_task にpublish
+            │                              構造化JSONへ変換し、/llm_task にpublish
             ├── color_common.py          # Yahboom標準
             ├── compute_joint5.py        # Yahboom標準
             ├── red_colorHSV.text        # Yahboom標準
@@ -122,6 +222,7 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
             ├── blue_colorHSV.text       # Yahboom標準
             └── yellow_colorHSV.text     # Yahboom標準
 ```
+
 ---
 
 ## 6. 作成したROS 2ノード
@@ -343,7 +444,7 @@ z=0.030
 
 本課題では、DOFBOT-Pi、ROS 2、Computer Vision、LLMを組み合わせ、自然言語から実世界のロボット動作までを接続するPhysical AIシステムを構築した。
 
-LLMが直接サーボやROS 2コードを生成するのではなく、高レベルなタスクを構造化JSONとして生成し、検証済みのROS 2ノードが実機制御を担当する構成とした。
+ベンチマークとした「自然言語からLLMがROS 2コードを生成し、ロボットを制御する」というアプローチを参考にしつつ、本課題ではLLMに直接サーボやROS 2コードを生成させるのではなく、高レベルなタスクを構造化JSONとして生成し、検証済みのROS 2ノードが実機制御を担当する構成とした。
 
 実機では把持位置精度に課題が残ったものの、
 
