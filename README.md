@@ -4,7 +4,7 @@
 
 本課題では、Yahboom DOFBOT-Pi ロボットアームを使用し、LLMによる自然言語理解、ROS 2、Computer Visionを組み合わせて、自然言語による指示から実機ロボットの動作までを実行するPhysical AIシステムを構築した。
 
-### 使用したロボット：DOFBOT-Pi
+### 使用したロボット：[DOFBOT-Pi](https://www.yahboom.store/collections/dofbot/products/dofbot-pi)
 
 DOFBOT-Piは、Yahboom社が提供するRaspberry Piベースの6DoFロボットアームで、6個のバスサーボとカメラを搭載している。
 
