@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ROS 2 / colcon
+build/
+install/
+log/
+
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+
+# OpenAI
+openai_api_key*
+secrets.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
+*~
