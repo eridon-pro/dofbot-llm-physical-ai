@@ -223,6 +223,41 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
             └── yellow_colorHSV.text     # Yahboom標準
 ```
 
+### ROS 2パッケージのビルド
+
+`llm_command_node.py`、`llm_color_sorting.py` を新規作成し、`setup.py` にROS 2 executableとして登録した後、Dockerコンテナ内で `dofbot_sorting` パッケージをビルドした。
+
+```bash
+cd /root/dofbot_ws
+
+colcon build --packages-select dofbot_sorting
+```
+
+ビルド完了後、ROS 2から新しく追加したノードを認識できるように、ワークスペースを読み込む。
+
+```bash
+source /root/dofbot_ws/install/setup.bash
+```
+
+追加したexecutableは以下のコマンドで確認できる。
+
+```bash
+ros2 pkg executables dofbot_sorting
+```
+
+以下が表示されれば、新規ノードが正常に登録されている。
+
+```text
+dofbot_sorting llm_color_sorting
+dofbot_sorting llm_command_node
+```
+
+以降、新しくターミナルを開いた場合も、必要に応じて以下を実行してROS 2ワークスペースを読み込む。
+
+```bash
+source /root/dofbot_ws/install/setup.bash
+```
+
 ---
 
 ## 6. 作成したROS 2ノード
@@ -280,6 +315,8 @@ z: 0.030
 cd /root/APP_DOFBOT
 sh kill_app.sh
 ```
+
+以下の実行手順は、前述の `colcon build` を完了し、`install/setup.bash` をsourceした状態を前提とする。
 
 ### Terminal 1：カメラ・IK
 
@@ -402,7 +439,7 @@ z=0.030
 
 のような把持位置情報を生成し、実機アームを動作させることができた。
 
-デモ動画では、把持に失敗するケースと、対象物の把持・移動に成功するケースの両方を示している。
+デモ動画（LLMへの指示：赤いブロックを片付けて）では、把持に失敗するケースと、対象物の把持・移動に成功するケースの両方を示している。
 
 ---
 
