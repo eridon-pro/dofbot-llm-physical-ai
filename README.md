@@ -211,7 +211,8 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
         │                                  ROS 2 executableとして登録
         └── dofbot_sorting/
             ├── color_sorting.py         # Yahboom標準
-            ├── llm_color_sorting.py     # 新規作成。/llm_task をsubscribe。指定色を画像認識し、
+            ├── llm_color_sorting.py     # color_sorting.py をベースに拡張。
+            　　　　　　　　　　　　　　　　　　　/llm_task をsubscribeし、指定色を画像認識。
             │                              対象位置を計算して /PosInfo にpublish
             ├── llm_command_node.py      # 新規作成。自然言語をOpenAI APIへ送信。LLM出力を
             │                              構造化JSONへ変換し、/llm_task にpublish
@@ -265,7 +266,8 @@ source /root/dofbot_ws/install/setup.bash
 ### llm_command_node
 
 自然言語による指示を `/natural_language_command` から受信し、OpenAI APIへ送信する。
-今回LLMモデルは、`OpenAI GPT-5 mini` を利用。
+LLMモデルはデフォルトで `gpt-5-mini` を使用する。
+環境変数 `OPENAI_MODEL` を設定することで変更可能としている。
 
 LLMから得られた結果を以下の形式へ正規化する。
 
@@ -497,3 +499,11 @@ z=0.030
 **Natural Language → LLM → Structured Command → Vision → Position Estimation → Robot Control → Physical Action**
 
 という一連のパイプラインを実機上で確認することができた。
+
+---
+
+## 参考・ベースコード
+
+- Yahboom DOFBOT-Pi official software/tutorial
+- `llm_color_sorting.py` は、Yahboom DOFBOT-Pi公式ROS 2環境の
+  `dofbot_sorting/color_sorting.py` をベースに、LLMタスク受信機能を追加して拡張した。
