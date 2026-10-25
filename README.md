@@ -212,7 +212,7 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
         └── dofbot_sorting/
             ├── color_sorting.py         # Yahboom標準
             ├── llm_color_sorting.py     # color_sorting.py をベースに拡張。
-            　　　　　　　　　　　　　　　　　　　/llm_task をsubscribeし、指定色を画像認識。
+            │                              /llm_task をsubscribeし、指定色を画像認識。
             │                              対象位置を計算して /PosInfo にpublish
             ├── llm_command_node.py      # 新規作成。自然言語をOpenAI APIへ送信。LLM出力を
             │                              構造化JSONへ変換し、/llm_task にpublish
