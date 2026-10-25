@@ -226,7 +226,7 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
 
 ### ROS 2パッケージのビルド
 
-`llm_command_node.py`、`llm_color_sorting.py` を新規作成し、`setup.py` にROS 2 executableとして登録した後、Dockerコンテナ内で `dofbot_sorting` パッケージをビルドした。
+`llm_command_node.py` を新規作成し、`color_sorting.py` をベースに `llm_color_sorting.py` を拡張作成した。さらに `setup.py` にROS 2 executableとして登録した後、Dockerコンテナ内で `dofbot_sorting` パッケージをビルドした。
 
 ```bash
 cd /root/dofbot_ws
