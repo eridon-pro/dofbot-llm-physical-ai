@@ -23,8 +23,6 @@
 
 ## 2. 目的
 
-以前の実験では、LLMにROS 2のPythonコードを直接生成させ、そのコードを実行することでロボットを操作した。
-
 今回は、より安全で再利用性の高い構成を目指し、LLMには低レベルなロボット制御コードを生成させず、「何を行うか」という高レベルなタスクのみをJSONとして生成させる方式とした。
 
 これにより、
@@ -98,7 +96,34 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
 
 ---
 
-## 5. 作成したROS 2ノード
+## 5. Dockerコンテナ内のファイル構成
+
+本課題では、Yahboom DOFBOT公式Docker環境内の
+`/root/dofbot_ws/src/dofbot_sorting/` を利用した。
+
+今回、新規作成・変更した主なファイルは以下の通り。
+
+```text
+/root/dofbot_ws/
+└── src/
+    └── dofbot_sorting/
+        ├── setup.py                     # 編集
+        └── dofbot_sorting/
+            ├── color_sorting.py         # Yahboom標準
+            ├── llm_color_sorting.py     # 新規作成。/llm_task をsubscribe。指定色を画像認識。
+                                           対象位置を計算して /PosInfo にpublish
+            ├── llm_command_node.py      # 新規作成。自然言語をOpenAI APIへ送信。LLM出力を構造化JSONへ変換。
+                                           /llm_task にpublish
+            ├── color_common.py          # Yahboom標準
+            ├── compute_joint5.py        # Yahboom標準
+            ├── red_colorHSV.text        # Yahboom標準
+            ├── green_colorHSV.text      # Yahboom標準
+            ├── blue_colorHSV.text       # Yahboom標準
+            └── yellow_colorHSV.text     # Yahboom標準
+
+---
+
+## 6. 作成したROS 2ノード
 
 ### llm_command_node
 
@@ -145,7 +170,7 @@ z: 0.030
 
 ---
 
-## 6. 実行方法
+## 7. 実行方法
 
 最初にDOFBOT標準APPを停止する。
 
@@ -214,7 +239,7 @@ LLMによって、
 
 ---
 
-## 7. 工夫した点
+## 8. 工夫した点
 
 ### LLMに直接ロボット制御コードを書かせない
 
@@ -245,7 +270,7 @@ LLM出力を自由文ではなく、
 
 ---
 
-## 8. 実験結果
+## 9. 実験結果
 
 自然言語による以下のような指示から、対象色の選択、画像認識、位置推定、アーム制御まで一連の処理が実行できることを確認した。
 
@@ -279,7 +304,7 @@ z=0.030
 
 ---
 
-## 9. 課題・制約
+## 10. 課題・制約
 
 現状では、画像上の対象位置からロボット座標への変換精度に課題がある。
 
@@ -299,7 +324,7 @@ z=0.030
 
 ---
 
-## 10. 今後の改善
+## 11. 今後の改善
 
 今後は以下を改善したい。
 
@@ -313,7 +338,7 @@ z=0.030
 
 ---
 
-## 11. まとめ
+## 12. まとめ
 
 本課題では、DOFBOT-Pi、ROS 2、Computer Vision、LLMを組み合わせ、自然言語から実世界のロボット動作までを接続するPhysical AIシステムを構築した。
 
