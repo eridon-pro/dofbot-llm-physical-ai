@@ -107,20 +107,21 @@ DOFBOT公式環境に含まれる以下の機能を利用した。
 /root/dofbot_ws/
 └── src/
     └── dofbot_sorting/
-        ├── setup.py                     # 編集。`llm_command_node`、`llm_color_sorting` をROS 2 executableとして登録。
+        ├── setup.py                     # 編集。llm_command_node、llm_color_sorting を
+        |                                  ROS 2 executableとして登録。
         └── dofbot_sorting/
             ├── color_sorting.py         # Yahboom標準
-            ├── llm_color_sorting.py     # 新規作成。`/llm_task` をsubscribe。指定色を画像認識。
-            |                              対象位置を計算して `/PosInfo` にpublish
-            ├── llm_command_node.py      # 新規作成。自然言語をOpenAI APIへ送信。LLM出力を構造化JSONへ変換。
-            |                              `/llm_task` にpublish
+            ├── llm_color_sorting.py     # 新規作成。/llm_task をsubscribe。指定色を画像認識。
+            |                              対象位置を計算して /PosInfo にpublish
+            ├── llm_command_node.py      # 新規作成。自然言語をOpenAI APIへ送信。LLM出力を
+            |                              構造化JSONへ変換。/llm_task にpublish
             ├── color_common.py          # Yahboom標準
             ├── compute_joint5.py        # Yahboom標準
             ├── red_colorHSV.text        # Yahboom標準
             ├── green_colorHSV.text      # Yahboom標準
             ├── blue_colorHSV.text       # Yahboom標準
             └── yellow_colorHSV.text     # Yahboom標準
-
+```
 ---
 
 ## 6. 作成したROS 2ノード
