@@ -12,7 +12,7 @@ ROS 2 Humble、Python、OpenCVを利用した開発環境が用意されてお�
 
 本課題では、DOFBOT-Pi公式環境が提供するカメラ、色認識、Inverse Kinematics、把持処理などの既存機能を活用し、その上にLLMによる自然言語インターフェースを追加した。
 
-### 参考にしたベースラインとした実装
+### 参考にしたベースライン実装
 
 本課題を検討するにあたり、以下のQiita記事をベースラインの一つとした。
 
@@ -506,4 +506,5 @@ z=0.030
 - [Yahboom DOFBOT-Pi official tutorial](https://www.yahboom.net/study/Dofbot-Pi)
 - `llm_color_sorting.py` は、Yahboom DOFBOT-Pi公式ROS 2環境の
   `dofbot_sorting/color_sorting.py` をベースに、LLMタスク受信機能を追加して拡張した。
-  [ChatGPT APIを使って自然言語の指示でGazebo上のTurtleBot3を制御する](https://qiita.com/porizou1/items/a085d20e936946330540)
+
+- [ChatGPT APIを使って自然言語の指示でGazebo上のTurtleBot3を制御する](https://qiita.com/porizou1/items/a085d20e936946330540)
