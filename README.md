@@ -1,8 +1,8 @@
-# DOFBOT-Pi × LLM による自然言語ロボット操作
+# LLMを用いた自然言語によるロボットアームの操作
 
 ## 1. 課題概要
 
-本課題では、Yahboom DOFBOT-Pi ロボットアームを使用し、LLMによる自然言語理解、ROS 2、Computer Visionを組み合わせて、自然言語による指示から実機ロボットの動作までを実行するPhysical AIシステムを構築した。
+本課題では、Yahboom社製 DOFBOT-Pi ロボットアームを使用し、LLMによる自然言語理解、ROS 2、Computer Visionを組み合わせて、自然言語による指示から実機ロボットの動作までを実行するPhysical AIシステムを構築した。
 
 ### 使用したロボットアーム：[DOFBOT-Pi](https://www.yahboom.store/collections/dofbot/products/dofbot-pi)
 
@@ -12,7 +12,7 @@ ROS 2 Humble、Python、OpenCVを利用した開発環境が用意されてお�
 
 本課題では、DOFBOT-Pi公式環境が提供するカメラ、色認識、Inverse Kinematics、把持処理などの既存機能を活用し、その上にLLMによる自然言語インターフェースを追加した。
 
-### ベースラインとした実装
+### 参考にしたベースラインとした実装
 
 本課題を検討するにあたり、以下のQiita記事をベースラインの一つとした。
 
@@ -456,7 +456,7 @@ z=0.030
 
 ## 10. 課題・制約
 
-現状では、画像上の対象位置からロボット座標への変換精度に課題がある。
+現状では、画像上の対象位置からロボット座標への変換精度に課題があるように見える。
 
 対象ブロックの位置によっては、推定された把持位置と実際の位置にずれが生じ、アームがブロック付近まで移動しても正確に把持できない場合がある。
 
@@ -479,7 +479,6 @@ z=0.030
 今後は以下を改善したい。
 
 - カメラキャリブレーションおよび座標変換精度の向上
-- 複数物体から対象物を選択する認識処理
 - RGB-Dカメラなどを利用した3次元位置推定
 - LLMが複数ステップのタスクプランを生成する機能
 - ROS 2 Actionを利用したタスク実行状態の管理
@@ -504,6 +503,7 @@ z=0.030
 
 ## 参考・ベースコード
 
-- Yahboom DOFBOT-Pi official software/tutorial
+- [Yahboom DOFBOT-Pi official tutorial](https://www.yahboom.net/study/Dofbot-Pi)
 - `llm_color_sorting.py` は、Yahboom DOFBOT-Pi公式ROS 2環境の
   `dofbot_sorting/color_sorting.py` をベースに、LLMタスク受信機能を追加して拡張した。
+  [ChatGPT APIを使って自然言語の指示でGazebo上のTurtleBot3を制御する](https://qiita.com/porizou1/items/a085d20e936946330540)
